@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/04 21:45:13 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/05 20:21:33 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,79 +58,6 @@ char	*keyword(char *word, int size)
 	return (temp);
 }
 
-void	print_env(void)
-{
-	int	i;
-
-	i = 0;
-	while (env[i])
-	{
-		ft_printf("%s\n", env[i]);
-		i++;
-	}
-}
-
-void	print_echo(char *line)
-{
-	char	**temp;
-	char	*key;
-	int		i;
-	int		j;
-	int		space;
-	int		size;
-	char	*key2;
-
-	temp = ft_strsplit(line, ' ', '\t');
-	i = 1;
-	space = 0;
-	size = 0;
-	while (temp[i])
-	{
-		j = 0;
-		if (space)
-			ft_printf(" ");
-		if (temp[i][0] == '~')
-		{
-			key = keyword("HOME=", 5);
-			ft_printf("%s", key);
-			j++;
-			space = 1;
-			if (temp[i][1] == '/')
-			{
-				ft_printf("/");
-				j++;
-				while (temp[i][j])
-				{
-					ft_printf("%c", temp[i][j]);
-					j++;
-				}
-			}
-			else if (temp[i][1])
-				ft_printf("no such user or named directory");
-		}
-		else if (temp[i][0] == '$' && temp[i][1])
-		{
-			size = ft_strlen(temp[i] + 1);
-			key2 = ft_strdup(temp[i] + 1);
-			key = keyword(key2, size);
-			if (key)
-			{
-				ft_printf("%s", key + 1);
-				space = 1;
-			}
-			else
-				ft_printf("\n");
-		}
-		else
-		{
-			ft_printf(temp[i]);
-			space = 1;
-		}
-		i++;
-	}
-	ft_printf("\n");
-}
-
 int		main(void)
 {
 	char	*line;
@@ -147,6 +74,8 @@ int		main(void)
 				exit(EXIT_SUCCESS);
 			else if (ft_strnequ(line, "echo", 4))
 				print_echo(line);
+			else if (ft_strnequ(line, "cd", 2))
+				cd(line);
 			free(line);
 			write (0, "$> ", 3);
 		}
