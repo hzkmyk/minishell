@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:58:03 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/05 20:21:11 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/06 20:53:27 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 # include "../libft/libft.h"
 
 char	**env;
+char	*current_path;
+char	*last_path;
+char	*last_last_path;
 
 /*
 ** cd.c

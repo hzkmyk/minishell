@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/05 20:21:33 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/06 20:38:54 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,9 @@ char	*keyword(char *word, int size)
 int		main(void)
 {
 	char	*line;
+	char	bud[100];
 
+	current_path = ft_strdup(getcwd(bud, 100));
 	save_env();
 	while (1)
 	{
