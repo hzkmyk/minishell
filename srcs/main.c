@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/07 20:06:05 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/08 00:26:42 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,38 +22,57 @@ int			size_of_env(char **environ)
 	return (i);
 }
 
-void		save_env(t_minishell *shell)
+
+t_env *newNode(char *str)
+{
+	t_env *tmp;
+
+	tmp = malloc(sizeof(t_env));
+	tmp->next = NULL;
+	tmp->elem = ft_strdup(str);
+
+	return tmp;
+}
+
+void		save_env(t_env *env)
 {
 	extern char	**environ;
 	int			size;
 	int			i;
+	t_env		*temp;
 
+
+	env->elem = ft_strdup(environ[0]);
 	size = size_of_env(environ);
-	shell->env = (char **)malloc(sizeof(char *) * (size + 1));
-	shell->env[size] = NULL;
-	i = 0;
+	// env->elem = ft_strdup(environ[0]);
+	// env = env->next;
+	i = 1;
 	while (i < size)
 	{
-		shell->env[i] = ft_strdup(environ[i]);
+		temp = newNode(environ[i]);
+		// temp = (t_env *)malloc(sizeof(t_env));
+		// temp->next = NULL;
+
+		// env->elem = ft_strdup(environ[i]);
+		env->next = temp;
+		env = env->next;
 		i++;
 	}
 }
 
-char		*keyword(char *word, int size, t_minishell *shell)
+char		*keyword(char *word, int size, t_env *env)
 {
-	int		i;
 	char	*temp;
 
-	i = 0;
 	temp = NULL;
-	while (shell->env[i])
+	while (env)
 	{
-		if (ft_strnequ(shell->env[i], word, size))
+		if (ft_strnequ(env->elem, word, size))
 		{
-			temp = ft_strdup(shell->env[i] + size);
+			temp = ft_strdup(env->elem + size);
 			break;
 		}
-		i++;
+		env = env->next;
 	}
 	return (temp);
 }
@@ -64,10 +83,11 @@ t_minishell	*init_shell(void)
 	char		bud[100];
 	
 	shell = (t_minishell *)malloc(sizeof(t_minishell));
+	shell->env = (t_env *)malloc(sizeof(t_env));
 	shell->current_path = ft_strdup(getcwd(bud, 100));
 	shell->pre_path = NULL;
 	shell->pre_pre_path = NULL;
-	save_env(shell);
+	save_env(shell->env);
 	return (shell);
 }
 
@@ -83,9 +103,9 @@ int			main(void)
 		while (get_next_line(0, &line))
 		{
 			if (ft_strequ(line, "env"))
-				print_env(shell);
-			// else if (ft_strequ(line, "setenv"))
-			// 	set_env(line, shell);
+				print_env(shell->env);
+			else if (ft_strnequ(line, "setenv", 6))
+				set_env(line, shell);
 			else if (ft_strequ(line, "exit"))
 				exit(EXIT_SUCCESS);
 			else if (ft_strnequ(line, "echo", 4))

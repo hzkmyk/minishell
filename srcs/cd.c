@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 20:02:12 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/07 19:39:48 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/07 21:09:17 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*handle_tilde(char **input, t_minishell *shell)
 	path = NULL;
 	if (input[1][1] == '/')
 	{
-		temp = keyword("HOME=", 5, shell);
+		temp = keyword("HOME=", 5, shell->env);
 		temp2 = ft_strjoin(temp, "/");
 		path = ft_strjoin(temp2, input[1] + 2);
 		free(temp);
@@ -74,7 +74,7 @@ void	cd(char *line, t_minishell *shell)
 	input = init_cd(line, shell);
 	path = NULL;
 	if (!input[1] || ft_strequ(input[1], "~") || ft_strequ(input[1], "~/") || ft_strequ(input[1], "$HOME"))
-		path = keyword("HOME=", 5, shell);
+		path = keyword("HOME=", 5, shell->env);
 	else if (ft_strequ(input[1], "/"))
 		path = ft_strdup("/");
 	else if (input[1][0] == '-')
@@ -88,8 +88,8 @@ void	cd(char *line, t_minishell *shell)
 	else
 		move(path);
 	shell->current_path = ft_strdup(getcwd(bud, 100));
-	free(shell->env[8]);
-	shell->env[8] = ft_strjoin("PWD=", ft_strdup(shell->current_path));
-	ft_printf("current:%s\n", shell->current_path);
+	free(shell->env->next->next->next->next->next->next->next->next->elem);
+	shell->env->next->next->next->next->next->next->next->next->elem = ft_strjoin("PWD=", ft_strdup(shell->current_path));
+	// ft_printf("current:%s\n", shell->current_path);
 	ft_free(input);
 }

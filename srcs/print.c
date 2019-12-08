@@ -6,21 +6,18 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 18:20:33 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/07 16:20:13 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/08 00:29:27 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	print_env(t_minishell *shell)
+void	print_env(t_env *env)
 {
-	int	i;
-
-	i = 0;
-	while (shell->env[i])
+	while (env)
 	{
-		ft_printf("%s\n", shell->env[i]);
-		i++;
+		ft_printf("%s\n", env->elem);
+		env = env->next;
 	}
 }
 
@@ -30,7 +27,7 @@ int		expan_one(int i, char **temp, t_minishell *shell)
 	char	*key;
 
 	j = 0;
-	key = keyword("HOME=", 5, shell);
+	key = keyword("HOME=", 5, shell->env);
 	ft_printf("%s", key);
 	j++;
 	if (temp[i][1] == '/')
@@ -55,7 +52,7 @@ int		expan_two(char *temp, t_minishell *shell)
 	
 	size = ft_strlen(temp + 1);
 	temp = ft_strdup(temp + 1);
-	key = keyword(temp, size, shell);
+	key = keyword(temp, size, shell->env);
 	if (key)
 	{
 		ft_printf("%s", key + 1);
