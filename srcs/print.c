@@ -6,31 +6,31 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 18:20:33 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/05 19:06:33 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/07 16:20:13 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	print_env(void)
+void	print_env(t_minishell *shell)
 {
 	int	i;
 
 	i = 0;
-	while (env[i])
+	while (shell->env[i])
 	{
-		ft_printf("%s\n", env[i]);
+		ft_printf("%s\n", shell->env[i]);
 		i++;
 	}
 }
 
-int		expan_one(int i, char **temp)
+int		expan_one(int i, char **temp, t_minishell *shell)
 {
 	int		j;
 	char	*key;
 
 	j = 0;
-	key = keyword("HOME=", 5);
+	key = keyword("HOME=", 5, shell);
 	ft_printf("%s", key);
 	j++;
 	if (temp[i][1] == '/')
@@ -48,14 +48,14 @@ int		expan_one(int i, char **temp)
 	return (1);
 }
 
-int		expan_two(char *temp)
+int		expan_two(char *temp, t_minishell *shell)
 {
 	int		size;
 	char	*key;
 	
 	size = ft_strlen(temp + 1);
 	temp = ft_strdup(temp + 1);
-	key = keyword(temp, size);
+	key = keyword(temp, size, shell);
 	if (key)
 	{
 		ft_printf("%s", key + 1);
@@ -66,7 +66,7 @@ int		expan_two(char *temp)
 	return (0);
 }
 
-void	print_echo(char *line)
+void	print_echo(char *line, t_minishell *shell)
 {
 	char	**temp;
 	int		i;
@@ -80,9 +80,9 @@ void	print_echo(char *line)
 		if (space)
 			ft_printf(" ");
 		if (temp[i][0] == '~')
-			space = expan_one(i, temp);
+			space = expan_one(i, temp, shell);
 		else if (temp[i][0] == '$' && temp[i][1])
-			space = expan_two(temp[i]);
+			space = expan_two(temp[i], shell);
 		else
 		{
 			ft_printf(temp[i]);
