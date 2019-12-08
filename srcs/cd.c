@@ -6,69 +6,90 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 20:02:12 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/07 16:22:56 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/07 19:39:48 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+void	move(char *path)
+{
+	if (chdir(path) == -1)
+		ft_printf("cd: no such file or directory\n");
+	free(path);
+}
+
+char	*handle_tilde(char **input, t_minishell *shell)
+{
+	char	*temp;
+	char	*temp2;
+	char	*path;
+
+	path = NULL;
+	if (input[1][1] == '/')
+	{
+		temp = keyword("HOME=", 5, shell);
+		temp2 = ft_strjoin(temp, "/");
+		path = ft_strjoin(temp2, input[1] + 2);
+		free(temp);
+		free(temp2);
+	}
+	else
+		ft_printf("zsh: no such user or named directory\n");
+	return (path);
+	// else weird
+}
+
+char	*handle_hyphen(char **input, t_minishell *shell)
+{
+	char *path;
+
+	path = NULL;
+	if (!input[1][1] && !input[2])
+	{
+		ft_printf("%s\n", shell->pre_path);
+		path = shell->pre_pre_path;
+	}
+	return (path);
+}
+
+char	**init_cd(char *line, t_minishell *shell)
+{
+	char	**input;
+
+	input = ft_strsplit(line, ' ', '\t');
+	shell->pre_pre_path = shell->pre_path;
+	shell->pre_path = shell->current_path;
+	// cd - pointer being freed was not allocated
+	free(shell->current_path);
+	return (input);
+}
+
 void	cd(char *line, t_minishell *shell)
 {
-	char	**temp;
+	char	**input;
 	char	*path;
 	char	bud[100];
-	char	*temp2;
-	char	*temp3;
 
-	temp = ft_strsplit(line, ' ', '\t');
-	shell->last_last_path = shell->last_path;
-	shell->last_path = shell->current_path;
+	input = init_cd(line, shell);
 	path = NULL;
-	if (!temp[1] || temp[1][0] == '/')
+	if (!input[1] || ft_strequ(input[1], "~") || ft_strequ(input[1], "~/") || ft_strequ(input[1], "$HOME"))
 		path = keyword("HOME=", 5, shell);
-	else if (temp[1][0] == '-')
-	{
-		if (!temp[1][1] && !temp[2])
-		{
-			ft_printf("%s\n", shell->last_path);
-			path = shell->last_last_path;
-		}
-	}
-	else if (temp[1][0] == '~')
-	{
-		if (!temp[1][1] || temp[1][1] == '/')
-		{
-			if (!temp[1][2])
-				path = keyword("HOME=", 5, shell);
-			else
-			{
-				temp2 = keyword("HOME=", 5, shell);
-				temp3 = ft_strjoin(temp2, "/");
-				path = ft_strjoin(temp3, temp[1] + 2);
-				free(temp2);
-				free(temp3);
-			}
-		}
-		else if (temp[1][1])
-		{
-			ft_printf("zsh: no such user or named directory\n");
-			return;
-		}
-	}
-	else if (ft_strequ(temp[1], "$HOME"))
-		path = keyword("HOME=", 5, shell);
+	else if (ft_strequ(input[1], "/"))
+		path = ft_strdup("/");
+	else if (input[1][0] == '-')
+		path = handle_hyphen(input, shell);
+	else if (input[1][0] == '~')
+		path = handle_tilde(input, shell);
 	else
-		path = ft_strjoin("./", temp[1]);
-	if (temp[1] && temp[2])
+		path = ft_strjoin("./", input[1]);
+	if (input[1] && input[2])
 		ft_printf("cd: string not in pwd\n");
 	else
-	{
-		if (chdir(path) == -1)
-			ft_printf("cd: no such file or directory\n");
-	}
-	free(path);
+		move(path);
 	shell->current_path = ft_strdup(getcwd(bud, 100));
 	free(shell->env[8]);
 	shell->env[8] = ft_strjoin("PWD=", ft_strdup(shell->current_path));
 	ft_printf("current:%s\n", shell->current_path);
+	ft_free(input);
 }

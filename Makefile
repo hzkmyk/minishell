@@ -6,7 +6,7 @@
 #    By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/13 18:50:01 by hmiyake           #+#    #+#              #
-#    Updated: 2019/12/05 20:02:48 by hmiyake          ###   ########.fr        #
+#    Updated: 2019/12/07 19:24:20 by hmiyake          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,8 @@ NAME := minishell
 
 CFILES := $(addprefix ./srcs/, main.c\
 			print.c\
-			cd.c)
+			cd.c \
+			env.c)
 
 OFILES := $(CFILES:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/07 16:28:59 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/07 20:06:05 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ t_minishell	*init_shell(void)
 	
 	shell = (t_minishell *)malloc(sizeof(t_minishell));
 	shell->current_path = ft_strdup(getcwd(bud, 100));
-	shell->last_path = NULL;
-	shell->last_path = NULL;
+	shell->pre_path = NULL;
+	shell->pre_pre_path = NULL;
 	save_env(shell);
 	return (shell);
 }
@@ -84,6 +84,8 @@ int			main(void)
 		{
 			if (ft_strequ(line, "env"))
 				print_env(shell);
+			// else if (ft_strequ(line, "setenv"))
+			// 	set_env(line, shell);
 			else if (ft_strequ(line, "exit"))
 				exit(EXIT_SUCCESS);
 			else if (ft_strnequ(line, "echo", 4))
