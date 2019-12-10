@@ -6,7 +6,7 @@
 #    By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/13 18:50:01 by hmiyake           #+#    #+#              #
-#    Updated: 2019/12/07 19:24:20 by hmiyake          ###   ########.fr        #
+#    Updated: 2019/12/09 18:27:49 by hmiyake          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,10 +32,11 @@ all: $(NAME)
 
 f:
 	gcc $(CFILES) -L libft/ -I libft/ $(F) -lft -g
-	
+
+# C flgas?
 $(NAME): $(OFILES)
 	@make -C $(LIBFT)
-	@$(CC) -o $@ $^ libft/libft.a $(LDFLAGS)
+	@$(CC) -o  $@ $^ $(CFLAGS) libft/libft.a $(LDFLAGS)
 
 clean:
 	@make -C libft/ clean

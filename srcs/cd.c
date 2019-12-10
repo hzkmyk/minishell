@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 20:02:12 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/07 21:09:17 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/08 19:10:06 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	cd(char *line, t_minishell *shell)
 		move(path);
 	shell->current_path = ft_strdup(getcwd(bud, 100));
 	free(shell->env->next->next->next->next->next->next->next->next->elem);
-	shell->env->next->next->next->next->next->next->next->next->elem = ft_strjoin("PWD=", ft_strdup(shell->current_path));
+	shell->env->next->next->next->next->next->next->next->next->elem = ft_strjoin("PWD=", shell->current_path);
 	// ft_printf("current:%s\n", shell->current_path);
 	ft_free(input);
 }

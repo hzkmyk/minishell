@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/08 00:26:42 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/09 23:16:11 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,15 @@ int			size_of_env(char **environ)
 }
 
 
-t_env *newNode(char *str)
+t_env		*new_node(char *str)
 {
-	t_env *tmp;
+	t_env *temp;
 
-	tmp = malloc(sizeof(t_env));
-	tmp->next = NULL;
-	tmp->elem = ft_strdup(str);
+	temp = (t_env *)malloc(sizeof(t_env));
+	temp->elem = str;
+	temp->next = NULL;
 
-	return tmp;
+	return (temp);
 }
 
 void		save_env(t_env *env)
@@ -44,16 +44,10 @@ void		save_env(t_env *env)
 
 	env->elem = ft_strdup(environ[0]);
 	size = size_of_env(environ);
-	// env->elem = ft_strdup(environ[0]);
-	// env = env->next;
 	i = 1;
 	while (i < size)
 	{
-		temp = newNode(environ[i]);
-		// temp = (t_env *)malloc(sizeof(t_env));
-		// temp->next = NULL;
-
-		// env->elem = ft_strdup(environ[i]);
+		temp = new_node(ft_strdup(environ[i]));
 		env->next = temp;
 		env = env->next;
 		i++;
@@ -97,20 +91,23 @@ int			main(void)
 	t_minishell	*shell;
 
 	shell = init_shell();
+	shell->env = NULL;
 	while (1)
 	{
 		write (0, "$> ", 3);
 		while (get_next_line(0, &line))
 		{
-			if (ft_strequ(line, "env"))
-				print_env(shell->env);
-			else if (ft_strnequ(line, "setenv", 6))
+			if (ft_strnequ(line, "setenv ", 7))
 				set_env(line, shell);
+			else if (ft_strnequ(line, "unsetenv ", 9))
+				unset_env(line, shell);
+			else if (ft_strequ(line, "env") || ft_strnequ(line, "setenv", 6))
+				print_env(shell->env);
 			else if (ft_strequ(line, "exit"))
 				exit(EXIT_SUCCESS);
-			else if (ft_strnequ(line, "echo", 4))
+			else if (ft_strnequ(line, "echo ", 5))
 				print_echo(line, shell);
-			else if (ft_strnequ(line, "cd", 2))
+			else if (ft_strnequ(line, "cd ", 3))
 				cd(line, shell);
 			free(line);
 			write (0, "$> ", 3);

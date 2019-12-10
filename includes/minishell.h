@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:58:03 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/07 23:58:29 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/09 20:46:42 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,12 @@ void				print_echo(char *line, t_minishell *shell);
 ** env.c
 */
 void				set_env(char *line, t_minishell *shell);
-
+void				unset_env(char *line, t_minishell *shell);
 
 /*
 ** main.c
 */
 char				*keyword(char *word, int size, t_env *env);
+t_env				*new_node(char *str);
 
 #endif
