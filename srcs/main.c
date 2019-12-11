@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/09 23:16:11 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/10 17:46:00 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ int			main(void)
 	t_minishell	*shell;
 
 	shell = init_shell();
-	shell->env = NULL;
 	while (1)
 	{
 		write (0, "$> ", 3);

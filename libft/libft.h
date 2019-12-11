@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/18 15:00:34 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/11/14 19:30:11 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/10 19:02:39 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int					ft_strequ(char const *s1, char const *s2);
 int					ft_strnequ(char const *s1, char const *s2, size_t n);
 char				*ft_strsub(char const *s, unsigned int start, size_t len);
 char				*ft_strjoin(char const *s1, char const *s2);
-char				*ft_strtrim(char const *s);
+char				*ft_strtrim(char const *s, char a, char b);
 char				**ft_strsplit(char const *s, char c, char d);
 char				*ft_itoa(int n);
 void				ft_putchar(char c);
@@ -95,5 +95,6 @@ int					new_line_checker(int fd, char **line, char **joyce);
 void				temp_to_joyce(int fd, char **joyce, char *buff);
 int					get_next_line(const int fd, char **line);
 void				ft_free(char **as);
+void    			ft_nodel(void *node);
 
 #endif

@@ -6,7 +6,7 @@
 #    By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/01/22 10:53:12 by hmiyake           #+#    #+#              #
-#    Updated: 2019/11/14 19:30:44 by hmiyake          ###   ########.fr        #
+#    Updated: 2019/12/10 18:50:49 by hmiyake          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -79,7 +79,8 @@ SRCS = ft_memset.c \
 	   ft_strrev.c \
 	   ft_isint.c \
 	   get_next_line.c \
-	   ft_free.c
+	   ft_free.c \
+	   ft_nodel.c
 
 SRCO = ft_memset.o \
 	   ft_bzero.o \
@@ -148,7 +149,8 @@ SRCO = ft_memset.o \
 	   ft_strrev.o \
 	   ft_isint.o \
 	   get_next_line.o \
-	   ft_free.o
+	   ft_free.o \
+	   ft_nodel.o
 
 FLGS = -c -Wall -Werror -Wextra
 
