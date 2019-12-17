@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 20:02:12 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/08 19:10:06 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/17 01:06:52 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 void	move(char *path)
 {
 	if (chdir(path) == -1)
-		ft_printf("cd: no such file or directory\n");
-	free(path);
+		ft_printf("cd: no such file or directory: %s\n", path);
 }
 
 char	*handle_tilde(char **input, t_minishell *shell)
@@ -44,52 +43,49 @@ char	*handle_hyphen(char **input, t_minishell *shell)
 {
 	char *path;
 
-	path = NULL;
 	if (!input[1][1] && !input[2])
 	{
-		ft_printf("%s\n", shell->pre_path);
-		path = shell->pre_pre_path;
+		// ft_printf("%s\n", shell->pre_path);
+		path = shell->pre_path;
+		if(path == NULL)
+			path = shell->current_path;
 	}
+	else
+		path = NULL;
+	ft_printf("%s\n", path);
 	return (path);
 }
 
-char	**init_cd(char *line, t_minishell *shell)
+void	init_cd(t_minishell *shell)
 {
-	char	**input;
-
-	input = ft_strsplit(line, ' ', '\t');
-	shell->pre_pre_path = shell->pre_path;
+	if (shell->pre_path)
+	{
+		free(shell->pre_path);
+		shell->pre_path = NULL;
+	}
+	// shell->pre_pre_path = shell->pre_path;
+	// ft_printf("prepre ha %s\n", shell->pre_pre_path);
 	shell->pre_path = shell->current_path;
-	// cd - pointer being freed was not allocated
-	free(shell->current_path);
-	return (input);
+	// cd - pointer being freed was./ not allocated
+	// free(shell->current_path);
 }
 
-void	cd(char *line, t_minishell *shell)
+void	cd(char **list, t_minishell *shell)
 {
-	char	**input;
 	char	*path;
 	char	bud[100];
 
-	input = init_cd(line, shell);
-	path = NULL;
-	if (!input[1] || ft_strequ(input[1], "~") || ft_strequ(input[1], "~/") || ft_strequ(input[1], "$HOME"))
-		path = keyword("HOME=", 5, shell->env);
-	else if (ft_strequ(input[1], "/"))
-		path = ft_strdup("/");
-	else if (input[1][0] == '-')
-		path = handle_hyphen(input, shell);
-	else if (input[1][0] == '~')
-		path = handle_tilde(input, shell);
+	if (list[1][0] == '-')
+		path = handle_hyphen(list, shell);
 	else
-		path = ft_strjoin("./", input[1]);
-	if (input[1] && input[2])
-		ft_printf("cd: string not in pwd\n");
+		path = list[1];
+	if (list[1] && list[2])
+		ft_printf("cd: string not in pwd: %s\n", list[1]);
 	else
 		move(path);
+	init_cd(shell);
 	shell->current_path = ft_strdup(getcwd(bud, 100));
+	ft_printf("pre:%s\ncurrent:%s\n", shell->pre_path, shell->current_path);
 	free(shell->env->next->next->next->next->next->next->next->next->elem);
 	shell->env->next->next->next->next->next->next->next->next->elem = ft_strjoin("PWD=", shell->current_path);
-	// ft_printf("current:%s\n", shell->current_path);
-	ft_free(input);
 }

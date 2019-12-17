@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 18:20:33 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/08 00:29:27 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/16 20:44:02 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,31 +21,7 @@ void	print_env(t_env *env)
 	}
 }
 
-int		expan_one(int i, char **temp, t_minishell *shell)
-{
-	int		j;
-	char	*key;
-
-	j = 0;
-	key = keyword("HOME=", 5, shell->env);
-	ft_printf("%s", key);
-	j++;
-	if (temp[i][1] == '/')
-	{
-		ft_printf("/");
-		j++;
-		while (temp[i][j])
-		{
-			ft_printf("%c", temp[i][j]);
-			j++;
-		}
-	}
-	else if (temp[i][1])
-		ft_printf("no such user or named directory");
-	return (1);
-}
-
-int		expan_two(char *temp, t_minishell *shell)
+int		handle_dollar(char *temp, t_minishell *shell)
 {
 	int		size;
 	char	*key;
@@ -63,26 +39,22 @@ int		expan_two(char *temp, t_minishell *shell)
 	return (0);
 }
 
-void	print_echo(char *line, t_minishell *shell)
+void	print_echo(char **list, t_minishell *shell)
 {
-	char	**temp;
 	int		i;
 	int		space;
 
-	temp = ft_strsplit(line, ' ', '\t');
 	i = 1;
 	space = 0;
-	while (temp[i])
+	while (list[i])
 	{
 		if (space)
 			ft_printf(" ");
-		if (temp[i][0] == '~')
-			space = expan_one(i, temp, shell);
-		else if (temp[i][0] == '$' && temp[i][1])
-			space = expan_two(temp[i], shell);
+		if (list[i][0] == '$' && list[i][1])
+			space = handle_dollar(list[i], shell);
 		else
 		{
-			ft_printf(temp[i]);
+			ft_printf(list[i]);
 			space = 1;
 		}
 		i++;
