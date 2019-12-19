@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 20:23:46 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/16 23:08:25 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/18 17:05:22 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	**save_environ(t_minishell *shell)
 	return (environ);
 }
 
-void	search_for_command(t_minishell *shell, char **list, char **environ)
+void	search_for_command(t_minishell *shell, char **environ)
 {
 	char			*key;
 	char			**paths;
@@ -59,33 +59,34 @@ void	search_for_command(t_minishell *shell, char **list, char **environ)
 		}
 		while ((readd = readdir(dir)))
 		{
-			if (ft_strequ(readd->d_name, list[0]))
+			if (ft_strequ(readd->d_name, shell->list[0]))
 			{
 				char *temp;
 				temp = ft_strjoin(paths[i], "/");
 				char *temp2;
-				temp2 = ft_strjoin(temp, list[0]);
-				execve(temp2, list, environ);
+				temp2 = ft_strjoin(temp, shell->list[0]);
+				execve(temp2, shell->list, environ);
 				return ;
 			}
 		}
 		i++;
 		closedir(dir);
 	}
-	ft_printf("zsh: command not found: %s\n", list[0]);
+	ft_printf("zsh: command not found: %s\n", shell->list[0]);
+	exit(EXIT_FAILURE);
 }
 
-void	child(t_minishell *shell, char **list)
+void	child(t_minishell *shell)
 {
 	char	**environ;
 
 	environ = save_environ(shell);
-	if (list[0][0] == '/')
-		execve(list[0], list, environ);
-	search_for_command(shell, list, environ);
+	if (shell->list[0][0] == '/')
+		execve(shell->list[0], shell->list, environ);
+	search_for_command(shell, environ);
 }
 
-void	 real_func(char **list, t_minishell *shell)
+void	 real_func(t_minishell *shell)
 {
 	pid_t	pid;
 	int		status;
@@ -97,7 +98,7 @@ void	 real_func(char **list, t_minishell *shell)
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
-		child(shell, list);
+		child(shell);
 	else
 		waitpid(pid, &status, 0);
 }

@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:58:03 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/17 01:03:01 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/18 18:25:41 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ typedef struct		s_minishell
 	t_env			*env;
 	char			*current_path;
 	char			*pre_path;
+	char			**list;
 }					t_minishell;
 
 /*
@@ -39,7 +40,7 @@ void				cd(char **list, t_minishell *shell);
 ** print.c
 */
 void				print_env(t_env *env);
-void				print_echo(char **list, t_minishell *shell);
+void				print_echo(char **list);
 
 /*
 ** env.c
@@ -50,7 +51,7 @@ void				unset_env(char *line, t_minishell *shell);
 /*
 ** real_func.c
 */
-void				real_func(char **list, t_minishell *shell);
+void				real_func(t_minishell *shell);
 
 /*
 ** main.c

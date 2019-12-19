@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/17 01:02:56 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/18 18:36:27 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ t_minishell	*init_shell(void)
 	shell->env = (t_env *)malloc(sizeof(t_env));
 	shell->current_path = ft_strdup(getcwd(bud, 100));
 	shell->pre_path = NULL;
+	shell->list = NULL;
 	save_env(shell->env);
 	return (shell);
 }
@@ -89,40 +90,79 @@ void		handler(int num)
 	ft_printf("\033[4G  \n$> ");
 }
 
-char		**replace(char **list, t_minishell *shell)
+void		handle_dollar(int i, t_minishell *shell)
+{
+	int		size;
+	char	*key;
+	char	*arr;
+	
+	size = ft_strlen(shell->list[i]);
+	arr = ft_strjoin(shell->list[i] + 1, "=");
+	key = keyword(arr, size, shell->env);
+	ft_strdel(&arr);
+	if (key)
+	{
+		ft_strdel(&(shell->list[i]));
+		shell->list[i] = ft_strdup(key);
+		ft_strdel(&key);
+	}
+	else
+		ft_printf("%s: Undefined variable.\n", shell->list[i] + 1);
+}
+
+int			replace(t_minishell *shell)
 {
 	int		i;
 	char	*temp;
 	char	*key;
 	char	*new;
-	
+	char	*temp2;
+
 	i = 0;
-	key = keyword("HOME=", 5, shell->env);
-	while(list[i])
+	while(shell->list[i])
 	{
-		temp = list[i];
+		temp = shell->list[i];
 		if (temp[0] == '~' || ft_strnequ(temp, "$HOME", 5))
 		{
+			key = keyword("HOME=", 5, shell->env);
 			temp = temp[0] == '~' ? temp + 1: temp + 5;
 			new = ft_strjoin(key, temp);
-			ft_strdel(&(list[i]));
-			list[i] = ft_strdup(new);
+			ft_strdel(&(shell->list[i]));
+			shell->list[i] = ft_strdup(new);
+			ft_strdel(&new);
+			ft_strdel(&key);
 		}
-		if (ft_strequ(temp, "/"))
+		else if (ft_strequ(temp, "/"))
 		{
-			ft_strdel(&(list[i]));
-			list[i] = ft_strdup("/");
+			ft_strdel(&(shell->list[i]));
+			shell->list[i] = ft_strdup("/");
+		}
+		else if (temp[0] == '$' && temp[1])
+			handle_dollar(i, shell);
+		else if ((temp[0] == '\"' && temp[ft_strlen(temp) - 1] == '\"') ||
+		(temp[0] == '\'' && temp[ft_strlen(temp) - 1] == '\''))
+		{
+			temp2 = ft_strtrim(temp, '\"', '\'');
+			ft_strdel(&(shell->list[i]));
+			shell->list[i] = temp2;
+		}
+		else if ((temp[0] == '\"' && temp[ft_strlen(temp) - 1] != '\"') ||
+		(temp[0] == '\'' && temp[ft_strlen(temp) - 1] != '\'') ||
+		(temp[0] != '\"' && temp[ft_strlen(temp) - 1] == '\"') ||
+		(temp[0] != '\"' && temp[ft_strlen(temp) - 1] == '\''))
+		{
+			ft_printf("Unmatched \".\n");
+			return (1);
 		}
 		i++;
 	}
-	return (list);
+	return (0);
 }
 
 int			main(void)
 {
 	char		*line;
 	t_minishell	*shell;
-	char		**list;
 
 	signal(SIGINT, handler);
 	shell = init_shell();
@@ -131,8 +171,13 @@ int			main(void)
 		write (0, "$> ", 3);
 		while (get_next_line(0, &line))
 		{
-			list = ft_strsplit(line, ' ', '\t');
-			list = replace(list, shell);
+			// need to chenge strsplit
+			shell->list = ft_strsplit(line, ' ', '\t');
+			if (replace(shell))
+			{
+				write (0, "$> ", 3);
+				continue;
+			}
 			if (ft_strnequ(line, "setenv ", 7))
 				set_env(line, shell);
 			else if (ft_strnequ(line, "unsetenv ", 9))
@@ -142,11 +187,11 @@ int			main(void)
 			else if (ft_strequ(line, "exit"))
 				exit(EXIT_SUCCESS);
 			else if (ft_strnequ(line, "echo ", 5))
-				print_echo(list, shell);
+				print_echo(shell->list);
 			else if (ft_strnequ(line, "cd ", 3))
-				cd(list, shell);
+				cd(shell->list, shell);
 			else
-				real_func(list, shell);
+				real_func(shell);
 			/*
 			else 
 				callRealFunction()
@@ -169,7 +214,7 @@ int			main(void)
 
 			*/
 			ft_strdel(&line);
-			ft_free(list);
+			ft_free(shell->list);
 			write (0, "$> ", 3);
 		}
 	}
