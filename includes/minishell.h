@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:58:03 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/18 18:25:41 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/19 23:34:45 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ void				cd(char **list, t_minishell *shell);
 */
 void				print_env(t_env *env);
 void				print_echo(char **list);
+char				**ft_strsplit2(char const *s, char c, char d);
+char				*ft_strtrim2(char const *s, char a, char b);
+char				*ft_strtrim3(char const *s, char a, char b);
 
 /*
 ** env.c
