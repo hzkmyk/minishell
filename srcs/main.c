@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/20 23:08:18 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/21 00:41:14 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,8 +121,8 @@ int			match_q(char *arr)
 	doub = 0;
 	while (arr[i])
 	{
-		if ((arr[0] != '\'' && arr[0] != '\"') || (arr[ft_strlen(arr) - 1] != '\'' && arr[ft_strlen(arr) - 1] != '\"'))
-			return (0);
+		// if ((arr[0] != '\'' && arr[0] != '\"') || (arr[ft_strlen(arr) - 1] != '\'' && arr[ft_strlen(arr) - 1] != '\"'))
+		// 	return (0);
 		if (arr[i] == '\'')
 			sing++;
 		if (sing == 2)
@@ -180,6 +180,28 @@ int			quot_ver1(char *arr)
 	return (0);
 }
 
+int			quot_ver2(char *arr)
+{
+	if ((arr[0] == '\"' && arr[ft_strlen(arr) - 1] != '\"') ||
+		(arr[0] == '\'' && arr[ft_strlen(arr) - 1] != '\'') ||
+		(arr[0] != '\"' && arr[ft_strlen(arr) - 1] == '\"') ||
+		(arr[0] != '\"' && arr[ft_strlen(arr) - 1] == '\''))
+		return (1);
+	return (0);
+}
+
+int			unmatched(void)
+{
+	ft_printf("Unmatched \".\n");
+	return (1);
+}
+
+void		replace_arr(t_minishell *shell, int i, char *arr)
+{
+	ft_strdel(&(shell->list[i]));
+	shell->list[i] = arr;
+}
+
 int			replace(t_minishell *shell)
 {
 	int		i;
@@ -201,35 +223,23 @@ int			replace(t_minishell *shell)
 			ft_strdel(&key);
 		}
 		else if (ft_strequ(temp, "/"))
-		{
-			ft_strdel(&(shell->list[i]));
-			shell->list[i] = ft_strdup("/");
-		}
+			replace_arr(shell, i, ft_strdup("/"));
 		else if (temp[0] == '$' && temp[1])
 			handle_dollar(i, shell);
 		else if (quot_ver1(temp))
 		{
 			new = ft_strtrim2(temp, '\"', '\'');
 			if (!same_count(new))
-			{
-				ft_printf("Unmatched \".\n");
-				ft_strdel(&temp);
-				return (1);
-			}
-			ft_strdel(&(shell->list[i]));
-			shell->list[i] = new;
+				return (unmatched());
+			replace_arr(shell, i, new);
 		}
 		else if (match_q(temp))
 		{
-			new = ft_strtrim3(temp, '\"', '\'');
-			ft_strdel(&(shell->list[i]));
-			shell->list[i] = new;
+			new = trim_chars(temp, '\"', '\'');
+			replace_arr(shell, i, new);
 		}
-		else if (fir_las_same_char(temp, '\'') || fir_las_same_char(temp, '\"'))
-		{
-			ft_printf("Unmatched \".\n");
-			return (1);
-		}
+		else if (quot_ver2(temp))
+			return (unmatched());
 		i++;
 	}
 	return (0);
