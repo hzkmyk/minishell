@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 19:56:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/20 00:52:11 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/20 23:08:18 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ int			match_q(char *arr)
 	doub = 0;
 	while (arr[i])
 	{
+		if ((arr[0] != '\'' && arr[0] != '\"') || (arr[ft_strlen(arr) - 1] != '\'' && arr[ft_strlen(arr) - 1] != '\"'))
+			return (0);
 		if (arr[i] == '\'')
 			sing++;
 		if (sing == 2)
@@ -162,27 +164,40 @@ int			same_count(char *arr)
 	return (1);
 }
 
+int			fir_las_same_char(char *arr, char c)
+{
+	if (arr[0] == c && arr[ft_strlen(arr) - 1] == c)
+		return (1);
+	return(0);
+}
+
+int			quot_ver1(char *arr)
+{
+	if (match_q(arr))
+		return (0);
+	if (fir_las_same_char(arr, '\'') || fir_las_same_char(arr, '\"'))
+		return (1);
+	return (0);
+}
+
 int			replace(t_minishell *shell)
 {
 	int		i;
 	char	*temp;
 	char	*key;
 	char	*new;
-	char	*temp2;
 
 	i = 0;
 	while(shell->list[i])
 	{
 		temp = shell->list[i];
-		ft_printf("temp[%d] is %s\n", i, temp);
 		if (temp[0] == '~' || ft_strnequ(temp, "$HOME", 5))
 		{
 			key = keyword("HOME=", 5, shell->env);
 			temp = temp[0] == '~' ? temp + 1: temp + 5;
 			new = ft_strjoin(key, temp);
 			ft_strdel(&(shell->list[i]));
-			shell->list[i] = ft_strdup(new);
-			ft_strdel(&new);
+			shell->list[i] = new;
 			ft_strdel(&key);
 		}
 		else if (ft_strequ(temp, "/"))
@@ -192,29 +207,25 @@ int			replace(t_minishell *shell)
 		}
 		else if (temp[0] == '$' && temp[1])
 			handle_dollar(i, shell);
-		else if (!match_q(temp) && ((temp[0] == '\"' && temp[ft_strlen(temp) - 1] == '\"') ||
-		(temp[0] == '\'' && temp[ft_strlen(temp) - 1] == '\'')))
+		else if (quot_ver1(temp))
 		{
-			temp2 = ft_strtrim2(temp, '\"', '\'');
-			ft_printf("--%s\n", temp2);
-			if (!same_count(temp2))
+			new = ft_strtrim2(temp, '\"', '\'');
+			if (!same_count(new))
 			{
 				ft_printf("Unmatched \".\n");
+				ft_strdel(&temp);
 				return (1);
 			}
 			ft_strdel(&(shell->list[i]));
-			shell->list[i] = temp2;
+			shell->list[i] = new;
 		}
 		else if (match_q(temp))
 		{
-			temp2 = ft_strtrim3(temp, '\"', '\'');
+			new = ft_strtrim3(temp, '\"', '\'');
 			ft_strdel(&(shell->list[i]));
-			shell->list[i] = temp2;
+			shell->list[i] = new;
 		}
-		else if ((temp[0] == '\"' && temp[ft_strlen(temp) - 1] != '\"') ||
-		(temp[0] == '\'' && temp[ft_strlen(temp) - 1] != '\'') ||
-		(temp[0] != '\"' && temp[ft_strlen(temp) - 1] == '\"') ||
-		(temp[0] != '\"' && temp[ft_strlen(temp) - 1] == '\''))
+		else if (fir_las_same_char(temp, '\'') || fir_las_same_char(temp, '\"'))
 		{
 			ft_printf("Unmatched \".\n");
 			return (1);
@@ -226,8 +237,6 @@ int			replace(t_minishell *shell)
 
 int			main(void)
 {
-	// char *a = ft_strtrim3("\'a\'\'a\'", '\'', '\"');
-	// printf("%s\n", a);
 	char		*line;
 	t_minishell	*shell;
 
@@ -238,13 +247,12 @@ int			main(void)
 		write (0, "$> ", 3);
 		while (get_next_line(0, &line))
 		{
-			// need to chenge strsplit
 			shell->list = ft_strsplit2(line, ' ', '\t');
-			// for (int l = 1; shell->list[l]; l++)
-			// 	printf("%d:%s\n", l, shell->list[l]);
 			if (replace(shell))
 			{
 				write (0, "$> ", 3);
+				ft_strdel(&line);
+				ft_free(shell->list);
 				continue;
 			}
 			if (ft_strnequ(line, "setenv ", 7))

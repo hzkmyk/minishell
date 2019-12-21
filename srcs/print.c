@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 18:20:33 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/20 00:53:32 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/20 22:38:44 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,12 @@ static int	getnumofw(const char *s, char c, char d)
 	i = 0;
 	count = 0;
 	quote = 0;
-	while (s[i] != '\0')
+	while (s[i])
 	{
 		if (s[i] == '\'' || s[i] == '\"')
 			quote++;
-		if (s[i] != c && s[i] != d && (quote != 1 && (s[i + 1] == c ||
-		s[i + 1] == d || s[i + 1] == '\0')))
+		if (s[i] != c && s[i] != d && ((quote != 1 && (s[i + 1] == c ||
+		s[i + 1] == d )) || s[i + 1] == '\0'))
 			count++;
 		i++;
 		if (quote == 2)
@@ -100,35 +100,31 @@ char		**ft_strsplit2(char const *s, char c, char d)
 	int		quote;
 
 	i = 0;
-	quote = 0;
-	if (!s)
-		return (0);
 	now = getnumofw(s, c, d);
+	quote = 0;
 	array = (char **)malloc(sizeof(char *) * (now + 1));
 	array[now] = NULL;
-	if (array)
+	while (i < now)
 	{
-		while (i < now)
+		if (*s == '\'' || *s == '\"')
+			quote++;
+		while (*s == c || *s == d)
+			s++;
+		if (*s != '\0')
+			array[i] = mallocandcopy(s, c, d);
+		while (*s != '\0' && ((*s != c && *s != d) || (*s == c && quote == 1) || (*s == d && quote == 1)))
 		{
 			if (*s == '\'' || *s == '\"')
 				quote++;
-			while (*s == c || *s == d)
-				s++;
-			if (*s != '\0')
-				array[i] = mallocandcopy(s, c, d);
-			while (*s != '\0' && ((*s != c && *s != d) || (*s == c && quote == 1) || (*s == d && quote == 1)))
-			{
-				if (*s == '\'' || *s == '\"')
-					quote++;
-				s++;
-			}
-			i++;
-			if (quote == 2)
-				quote = 0;
+			s++;
 		}
+		i++;
+		if (quote == 2)
+			quote = 0;
 	}
 	return (array);
 }
+
 
 char	*ft_strtrim2(char const *s, char a, char b)
 {
