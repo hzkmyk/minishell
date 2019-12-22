@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 20:23:46 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/18 17:05:22 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/21 22:02:45 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,38 +39,46 @@ char	**save_environ(t_minishell *shell)
 	return (environ);
 }
 
+int		search_for_command2(struct dirent *readd, t_minishell *shell,
+char *path, char **environ)
+{
+	char	*temp;
+	char	*temp2;
+
+	if (ft_strequ(readd->d_name, shell->list[0]))
+	{
+		temp = ft_strjoin(path, "/");
+		temp2 = ft_strjoin(temp, shell->list[0]);
+		execve(temp2, shell->list, environ);
+		return (1);
+	}
+	return (0);
+}
+
 void	search_for_command(t_minishell *shell, char **environ)
 {
-	char			*key;
+	char			*temp;
 	char			**paths;
 	int				i;
 	DIR				*dir;
 	struct dirent	*readd;
 
-	key = keyword("PATH=", 5, shell->env);
-	paths = ft_strsplit(key, ':', ' ');
+	temp = keyword("PATH=", 5, shell->env);
+	paths = ft_strsplit(temp, ':', ' ');
+	ft_strdel(&temp);
 	i = 0;
 	while (paths[i])
 	{
-		if (!(dir = opendir(paths[i])))
+		if ((dir = opendir(paths[i])))
 		{
-			i++;
-			continue;
-		}
-		while ((readd = readdir(dir)))
-		{
-			if (ft_strequ(readd->d_name, shell->list[0]))
+			while ((readd = readdir(dir)))
 			{
-				char *temp;
-				temp = ft_strjoin(paths[i], "/");
-				char *temp2;
-				temp2 = ft_strjoin(temp, shell->list[0]);
-				execve(temp2, shell->list, environ);
-				return ;
+				if (search_for_command2(readd, shell, paths[i], environ))
+					return ;
 			}
+			closedir(dir);
 		}
 		i++;
-		closedir(dir);
 	}
 	ft_printf("zsh: command not found: %s\n", shell->list[0]);
 	exit(EXIT_FAILURE);
@@ -86,7 +94,7 @@ void	child(t_minishell *shell)
 	search_for_command(shell, environ);
 }
 
-void	 real_func(t_minishell *shell)
+void	real_func(t_minishell *shell)
 {
 	pid_t	pid;
 	int		status;

@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 20:02:12 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/20 23:41:27 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/21 21:51:46 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*handle_hyphen(char **input, t_minishell *shell)
 	if (!input[1][1] && !input[2])
 	{
 		path = shell->pre_path;
-		if(path == NULL)
+		if (path == NULL)
 			path = shell->current_path;
 	}
 	else
@@ -44,6 +44,23 @@ void	init_cd(t_minishell *shell)
 	shell->pre_path = shell->current_path;
 }
 
+void	replace_pwd(t_minishell *shell)
+{
+	t_env	*temp;
+
+	temp = shell->env;
+	while (temp)
+	{
+		if (ft_strnequ(temp->elem, "PWD=", 4))
+		{
+			ft_strdel(&(temp->elem));
+			temp->elem = ft_strjoin("PWD=", shell->current_path);
+			return ;
+		}
+		temp = temp->next;
+	}
+}
+
 void	cd(char **list, t_minishell *shell)
 {
 	char	*path;
@@ -59,6 +76,5 @@ void	cd(char **list, t_minishell *shell)
 		move(path);
 	init_cd(shell);
 	shell->current_path = ft_strdup(getcwd(bud, 100));
-	free(shell->env->next->next->next->next->next->next->next->next->elem);
-	shell->env->next->next->next->next->next->next->next->next->elem = ft_strjoin("PWD=", shell->current_path);
+	replace_pwd(shell);
 }
