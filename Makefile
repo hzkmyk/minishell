@@ -6,7 +6,7 @@
 #    By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/13 18:50:01 by hmiyake           #+#    #+#              #
-#    Updated: 2019/12/21 22:56:11 by hmiyake          ###   ########.fr        #
+#    Updated: 2019/12/22 17:07:41 by hmiyake          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,10 @@ CFILES := $(addprefix ./srcs/, main.c\
 			env2.c \
 			expansions.c \
 			real_func.c \
-			str_split.c)
+			replace.c \
+			str_split.c \
+			str_trim.c \
+			validation.c)
 
 OFILES := $(CFILES:.c=.o)
 
