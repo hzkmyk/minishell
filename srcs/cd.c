@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 20:02:12 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/22 20:46:37 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/22 21:32:20 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ void	cd(char **list, t_minishell *shell)
 		ft_printf("cd: string not in pwd: %s\n", list[1]);
 	else
 		move(path);
+	if (!list[1])
+		ft_strdel(&path);
 	init_cd(shell);
 	shell->current_path = ft_strdup(getcwd(bud, 100));
 	replace_pwd(shell);

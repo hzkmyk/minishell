@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/07 19:23:38 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/21 22:42:04 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/22 21:26:14 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void	unset_env(t_minishell *shell)
 		return ;
 	}
 	unset_env2(temp, str);
+	ft_strdel(&str);
 }
 
 void	set_env(t_minishell *shell)
