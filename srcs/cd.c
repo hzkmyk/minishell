@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 20:02:12 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/21 21:51:46 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/22 20:46:37 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ void	cd(char **list, t_minishell *shell)
 	char	*path;
 	char	bud[100];
 
-	if (list[1][0] == '-')
+	if (!list[1])
+		path = keyword("HOME=", 5, shell->env);
+	else if (list[1][0] == '-')
 		path = handle_hyphen(list, shell);
 	else
 		path = list[1];
