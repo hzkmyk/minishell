@@ -6,7 +6,7 @@
 /*   By: hmiyake <hmiyake@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/21 22:41:11 by hmiyake           #+#    #+#             */
-/*   Updated: 2019/12/21 22:44:04 by hmiyake          ###   ########.fr       */
+/*   Updated: 2019/12/23 18:40:31 by hmiyake          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@ void		update_env(char *key, char *str, t_minishell *shell)
 	{
 		if (ft_strnequ(temp->elem, key, ft_strlen(key)))
 		{
-			free(temp->elem);
+			ft_strdel(&temp->elem);
 			temp->elem = ft_strdup(str);
+			ft_strdel(&str);
 			return ;
 		}
 		temp = temp->next;
